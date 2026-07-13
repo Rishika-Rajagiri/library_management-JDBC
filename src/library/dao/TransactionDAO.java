@@ -11,7 +11,7 @@ import java.util.List;
 public class TransactionDAO {
     //CREATE - add a new transaction
     public void addTransaction(Transaction t) throws SQLException{
-        String sql="INSERT INTO Transactions(book_id,member_id,borrow_date,due_date,return_date,fine_amount) VALUES(?,?,?,?,?,?)";
+        String sql="INSERT INTO transactions(book_id,member_id,borrow_date,due_date,return_date,fine_amount) VALUES(?,?,?,?,?,?)";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, t.getBookId());
@@ -26,7 +26,7 @@ public class TransactionDAO {
 
     // UPDATE - Mark a transaction as returned
     public void updateReturn(int transactionId, LocalDate returnDate, BigDecimal fine) throws SQLException {
-        String sql = "UPDATE Transactions SET return_date=?, fine_amount=? WHERE transaction_id=?";
+        String sql = "UPDATE transactions SET return_date=?, fine_amount=? WHERE transaction_id=?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setDate(1, Date.valueOf(returnDate));
@@ -38,7 +38,7 @@ public class TransactionDAO {
 
     // READ - Get one transaction by ID
     public Transaction getTransactionById(int transactionId) throws SQLException {
-        String sql = "SELECT * FROM Transactions WHERE transaction_id = ?";
+        String sql = "SELECT * FROM transactions WHERE transaction_id = ?";
         try (Connection con= DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, transactionId);
@@ -63,7 +63,7 @@ public class TransactionDAO {
     // READ - Get all transactions
     public List<Transaction> getAllTransactions() throws SQLException {
         List<Transaction> list = new ArrayList<>();
-        String sql = "SELECT * FROM Transactions";
+        String sql = "SELECT * FROM transactions";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -86,7 +86,7 @@ public class TransactionDAO {
     // READ - Get all transactions for a specific member
     public List<Transaction> getTransactionsByMember(int memberId) throws SQLException {
         List<Transaction> list = new ArrayList<>();
-        String sql = "SELECT * FROM Transactions WHERE member_id = ?";
+        String sql = "SELECT * FROM transactions WHERE member_id = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps= con.prepareStatement(sql)) {
             ps.setInt(1, memberId);
@@ -110,7 +110,7 @@ public class TransactionDAO {
 
     // DELETE - Remove a transaction record
     public void deleteTransaction(int transactionId) throws SQLException {
-        String sql = "DELETE FROM Transactions WHERE transaction_id = ?";
+        String sql = "DELETE FROM transactions WHERE transaction_id = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, transactionId);

@@ -11,22 +11,28 @@ import java.util.List;
 
 public class BookDAO {
     //CREATE - add a book
-    public void addBook(Book book) throws SQLException {
-        String sql = "INSERT INTO Book(title,author,category,total_copies,available_copies) VALUES(?,?,?,?,?";
+    public int addBook(Book book) throws SQLException {
+        String sql = "INSERT INTO books(title,author,category,total_copies,available_copies) VALUES(?,?,?,?,?)";
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, book.getTitle());
             ps.setString(2, book.getAuthor());
             ps.setString(3, book.getCategory());
             ps.setInt(4, book.getTotalCopies());
-            ps.setInt(5, book.getTotalCopies());
+            ps.setInt(5, book.getAvailableCopies());
             ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
         }
+        return -1;
     }
 
     //READ - get a book by ID
-    public Book getBookByID(int bookId) throws SQLException {
-        String sql = "SELECT * FROM Books WHERE book_id = ?";
+    public Book getBookById(int bookId) throws SQLException {
+        String sql = "SELECT * FROM books WHERE book_id = ?";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -51,7 +57,7 @@ public class BookDAO {
     //READ - get all books
     public List<Book> getAllBooks() throws SQLException{
         List<Book> books=new ArrayList<>();
-        String sql="SELECT * FROM Books";
+        String sql="SELECT * FROM books";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -73,7 +79,7 @@ public class BookDAO {
 
     //UPDATE - update the existing book
     public void updateBook(Book book) throws SQLException {
-        String sql = "UPDATE Books SET title = ?, author = ?, category = ?, total_copies = ?, available_copies = ? WHERE book_id = ?";
+        String sql = "UPDATE books SET title = ?, author = ?, category = ?, total_copies = ?, available_copies = ? WHERE book_id = ?";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -91,7 +97,7 @@ public class BookDAO {
 
     //DELETE -Remove a book
     public void deleteBook(int bookId) throws SQLException {
-        String sql = "DELETE FROM Books WHERE book_id = ?";
+        String sql = "DELETE FROM books WHERE book_id = ?";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
